@@ -1,0 +1,118 @@
+version: 2
+updates:
+  # Maven dependencies for consumer-service
+  - package-ecosystem: "maven"
+    directory: "/consumer-service"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "your-team"
+    labels:
+      - "dependencies"
+      - "consumer-service"
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    groups:
+      spring:
+        patterns:
+          - "org.springframework*"
+        update-types:
+          - "minor"
+          - "patch"
+      kafka:
+        patterns:
+          - "org.apache.kafka*"
+          - "org.springframework.kafka*"
+      testing:
+        patterns:
+          - "*junit*"
+          - "*mockito*"
+          - "*assertj*"
+    ignore:
+      # Ignore major version updates for Spring Boot (manual review needed)
+      - dependency-name: "org.springframework.boot:spring-boot-starter-parent"
+        update-types: ["version-update:semver-major"]
+
+  # Maven dependencies for producer-service
+  - package-ecosystem: "maven"
+    directory: "/producer-service"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "your-team"
+    labels:
+      - "dependencies"
+      - "producer-service"
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    groups:
+      spring:
+        patterns:
+          - "org.springframework*"
+        update-types:
+          - "minor"
+          - "patch"
+      kafka:
+        patterns:
+          - "org.apache.kafka*"
+          - "org.springframework.kafka*"
+      testing:
+        patterns:
+          - "*junit*"
+          - "*mockito*"
+          - "*assertj*"
+    ignore:
+      # Ignore major version updates for Spring Boot (manual review needed)
+      - dependency-name: "org.springframework.boot:spring-boot-starter-parent"
+        update-types: ["version-update:semver-major"]
+
+  # Docker base images
+  - package-ecosystem: "docker"
+    directory: "/consumer-service"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "docker"
+      - "consumer-service"
+    commit-message:
+      prefix: "chore(docker)"
+
+  - package-ecosystem: "docker"
+    directory: "/producer-service"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "docker"
+      - "producer-service"
+    commit-message:
+      prefix: "chore(docker)"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "chore(actions)"

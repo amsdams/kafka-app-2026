@@ -18,12 +18,14 @@ A complete microservices architecture with Kafka messaging, featuring producer a
 
 ## 🛠️ Technologies
 
-- **Spring Boot 3.2.0**
-- **Spring Kafka**
+- **Spring Boot 4.0.2** ⚡ (Upgraded from 3.x)
+- **Spring Kafka** (Latest compatible version)
 - **Apache Kafka 7.5.0**
 - **Docker & Docker Compose**
 - **Maven**
 - **Java 21**
+- **GitHub Actions** (CI/CD pipelines)
+- **Dependabot** (Automated dependency updates)
 
 ## 📁 Project Structure
 
@@ -272,6 +274,45 @@ ports:
 ✅ Health check endpoints  
 ✅ Containerized with Docker  
 ✅ Production-ready configuration  
+✅ **CI/CD with GitHub Actions**  
+✅ **Automated dependency updates**  
+✅ **Multi-platform Docker builds**  
+✅ **Fixed Kafka deserialization issues**  
+
+## 🔄 CI/CD Pipelines
+
+This project includes comprehensive GitHub Actions workflows:
+
+### Pull Request Checks (`ci-pr.yml`)
+- ✅ Build and test both services
+- ✅ Code quality verification
+- ✅ Docker image building
+- ✅ Integration tests with Kafka
+- ✅ Matrix builds for parallel execution
+
+### Main Branch Deployment (`cd-main.yml`)
+- 🚀 Automated builds on merge to main
+- 📦 Docker image publishing to GitHub Container Registry
+- 🌍 Multi-platform builds (linux/amd64, linux/arm64)
+- 🏥 Deployment to production with health checks
+- 📢 Deployment notifications
+
+### Dependency Updates (`dependabot.yml`)
+- 🔄 Weekly automated dependency updates
+- 📦 Separate updates for Maven, Docker, GitHub Actions
+- 🔗 Grouped updates for related dependencies
+- 🏷️ Automatic labeling and PR creation
+
+## ⚡ Recent Upgrades
+
+### Spring Boot 4 Migration
+This project has been upgraded to **Spring Boot 4.0.2** with the following improvements:
+
+- ✨ Latest Spring Framework 7.0
+- 🔧 Fixed Kafka deserialization type mapping issues
+- 📚 Updated dependencies for compatibility
+- 🐳 Enhanced Docker build process
+- 📖 See [SPRING_BOOT_4_MIGRATION.md](SPRING_BOOT_4_MIGRATION.md) for details  
 
 ## 📝 Next Steps
 
