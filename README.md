@@ -23,7 +23,7 @@ A complete microservices architecture with Kafka messaging, featuring producer a
 - **Apache Kafka 7.5.0**
 - **Docker & Docker Compose**
 - **Maven**
-- **Java 17**
+- **Java 21**
 
 ## 📁 Project Structure
 
@@ -63,7 +63,7 @@ A complete microservices architecture with Kafka messaging, featuring producer a
 ### Prerequisites
 
 - Docker and Docker Compose installed
-- Java 17+ (for local development)
+- Java 21+ (for local development)
 - Maven 3.6+ (for local development)
 
 ### Running with Docker Compose
