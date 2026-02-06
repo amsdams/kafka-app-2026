@@ -6,7 +6,6 @@ A complete microservices setup with:
 - **Producer Service** - Publishes messages to Kafka
 - **Consumer Service** - Consumes and processes messages from Kafka
 - **Kafka Broker** - Message broker
-- **Zookeeper** - Kafka coordinator
 - **Docker Compose** - Orchestrates all services
 
 ## ⚡ Quick Start (3 Steps)
@@ -43,7 +42,6 @@ This sends 10 random events and you can watch them being processed.
 - Producer API: http://localhost:8081
 - Consumer API: http://localhost:8082
 - Kafka: localhost:29092 (external), kafka:9092 (internal)
-- Zookeeper: localhost:2181
 
 ## 🔍 Useful Commands
 

@@ -18,7 +18,6 @@ docker-compose down -v
 
 echo ""
 echo "🏗️  Building and starting services..."
-echo "   - Zookeeper"
 echo "   - Kafka Broker"
 echo "   - Producer Service (port 8081)"
 echo "   - Consumer Service (port 8082)"

@@ -5,7 +5,6 @@ spring:
   application:
     name: producer-service
   kafka:
-    # ZooKeeper is completely removed in Kafka 4.0; KRaft only uses bootstrap-servers.
     bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
