@@ -120,16 +120,19 @@ jobs:
 
       - name: Start Docker Compose
         run: |
-          # 1. Use 'docker compose' (v2) 
-          # 2. Removed 'zookeeper' as we are now KRaft-only
           docker compose up -d kafka
-          # KRaft usually needs a bit longer to elect a controller
-          sleep 40
+          # Give the container a moment to actually start the process
+          sleep 10 
 
-      - name: Wait for Kafka
+      - name: Wait for Kafka KRaft
         run: |
-          # Updated to use 'docker compose' for the exec command
-          timeout 60 bash -c 'until docker compose exec kafka kafka-topics --bootstrap-server localhost:9092 --list; do sleep 5; done'
+          # Increased timeout to 90s for KRaft election
+          # We use --bootstrap-server kafka:9092 because we are 'exec-ing' INSIDE the network
+          timeout 90 bash -c '
+          until docker compose exec kafka kafka-topics --bootstrap-server kafka:9092 --list; do
+            echo "Waiting for KRaft controller election..."
+            sleep 5
+          done'
 
       - name: Run integration tests
         run: |
