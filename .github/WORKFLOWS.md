@@ -25,7 +25,7 @@ The project includes three main workflow files:
 - **Strategy**: Matrix build for `consumer-service` and `producer-service`
 - **Steps**:
   1. Checkout code
-  2. Setup JDK 21 with Maven cache
+  2. Setup JDK 25 with Maven cache
   3. Build service
   4. Run tests
   5. Package JAR
@@ -35,7 +35,7 @@ The project includes three main workflow files:
 - **Purpose**: Run Maven verify for code quality checks
 - **Steps**:
   1. Checkout code
-  2. Setup JDK 21
+  2. Setup JDK 25
   3. Run `mvn verify` for both services
 
 #### `docker-build-test`
@@ -51,7 +51,7 @@ The project includes three main workflow files:
 - **Purpose**: Run integration tests with actual Kafka
 - **Dependencies**: Requires `build-and-test` to complete
 - **Steps**:
-  1. Start Kafka and Zookeeper via Docker Compose
+  1. Start Kafka via Docker Compose
   2. Wait for Kafka to be ready (60s timeout)
   3. Run integration tests
   4. Clean up containers
@@ -87,7 +87,7 @@ IMAGE_NAME: ${{ github.repository }}
 - **Strategy**: Matrix build for both services
 - **Steps**:
   1. Checkout code
-  2. Setup JDK 21
+  2. Setup JDK 25
   3. Run `mvn clean verify` (includes tests)
   4. Upload artifact (retained for 30 days)
 

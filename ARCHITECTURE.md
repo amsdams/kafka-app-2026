@@ -6,11 +6,7 @@
 ┌─────────────────────────────────────────────────────────────────────┐
 │                         Docker Network                              │
 │                                                                     │
-│  ┌──────────────────┐                                              │
-│  │   Zookeeper      │                                              │
-│  │   Port: 2181     │◄─────────────────┐                          │
-│  └──────────────────┘                  │                          │
-│                                         │                          │
+│                                                                   │
 │  ┌──────────────────────────────────────┼───────────────────────┐ │
 │  │         Kafka Broker                 │                       │ │
 │  │  Internal: 9092                      │                       │ │
@@ -103,7 +99,6 @@
 │  kafka-network (Bridge)                            │
 │                                                    │
 │  Services:                                         │
-│  ├─ zookeeper:2181                                │
 │  ├─ kafka:9092 (internal)                         │
 │  ├─ producer-service:8081                         │
 │  └─ consumer-service:8082                         │
@@ -111,7 +106,6 @@
 │  External Access:                                  │
 │  ├─ localhost:8081 → producer-service:8081        │
 │  ├─ localhost:8082 → consumer-service:8082        │
-│  ├─ localhost:2181 → zookeeper:2181               │
 │  └─ localhost:29092 → kafka:9092                  │
 └────────────────────────────────────────────────────┘
 ```

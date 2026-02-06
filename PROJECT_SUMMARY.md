@@ -20,9 +20,6 @@
    - Automatic topic creation
    - Data persistence
 
-4. **Zookeeper** (Port 2181)
-   - Kafka cluster coordination
-
 ### 📄 Files Created
 
 ```

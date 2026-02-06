@@ -14,7 +14,7 @@ cd consumer-service && mvn test && cd ..
 cd producer-service && mvn test && cd ..
 
 # Start infrastructure only
-docker-compose up -d kafka zookeeper
+docker-compose up -d kafka
 
 # Start all services
 docker-compose up -d

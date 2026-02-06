@@ -9,11 +9,6 @@ A complete microservices architecture with Kafka messaging, featuring producer a
 │  Producer Service   │─────▶│    Kafka     │─────▶│  Consumer Service   │
 │    (Port 8081)      │      │   Broker     │      │    (Port 8082)      │
 └─────────────────────┘      └──────────────┘      └─────────────────────┘
-                                    │
-                                    ▼
-                             ┌──────────────┐
-                             │  Zookeeper   │
-                             └──────────────┘
 ```
 
 ## 🛠️ Technologies
@@ -23,7 +18,7 @@ A complete microservices architecture with Kafka messaging, featuring producer a
 - **Apache Kafka 7.5.0**
 - **Docker & Docker Compose**
 - **Maven**
-- **Java 21**
+- **Java 25**
 - **GitHub Actions** (CI/CD pipelines)
 - **Dependabot** (Automated dependency updates)
 
@@ -65,7 +60,7 @@ A complete microservices architecture with Kafka messaging, featuring producer a
 ### Prerequisites
 
 - Docker and Docker Compose installed
-- Java 21+ (for local development)
+- Java 25+ (for local development)
 - Maven 3.6+ (for local development)
 
 ### Running with Docker Compose
@@ -77,7 +72,6 @@ docker-compose up --build
 ```
 
 This will start:
-- Zookeeper (port 2181)
 - Kafka broker (ports 9092, 29092)
 - Producer service (port 8081)
 - Consumer service (port 8082)
@@ -191,10 +185,10 @@ docker-compose down -v
 
 ### Running services locally (without Docker)
 
-1. **Start Kafka and Zookeeper:**
+1. **Start Kafka:**
 
 ```bash
-docker-compose up zookeeper kafka -d
+docker-compose up kafka -d
 ```
 
 2. **Run Producer Service:**
@@ -251,7 +245,7 @@ docker-compose logs
 
 Ensure Kafka is fully started before the services:
 ```bash
-docker-compose up zookeeper kafka -d
+docker-compose up kafka -d
 # Wait 30 seconds
 docker-compose up producer-service consumer-service -d
 ```

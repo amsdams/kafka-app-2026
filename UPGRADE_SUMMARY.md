@@ -262,7 +262,7 @@ cd consumer-service && mvn clean install
 cd ../producer-service && mvn clean install
 
 # Run integration tests
-docker-compose up -d kafka zookeeper
+docker-compose up -d kafka
 # Wait 30 seconds
 cd consumer-service && mvn verify
 cd ../producer-service && mvn verify

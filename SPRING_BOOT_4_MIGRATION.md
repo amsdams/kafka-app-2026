@@ -6,12 +6,12 @@ This document outlines the changes made to upgrade the Kafka application from Sp
 
 ### Version Updates
 
-| Component | Old Version | New Version |
-|-----------|-------------|-------------|
-| Spring Boot | 3.5.10 | 4.0.2 |
-| SpringDoc OpenAPI | 2.3.0 | 2.8.4 |
-| Java | 21 | 21 (unchanged) |
-| Maven Compiler Plugin | 3.15.0 | 3.15.0 (unchanged) |
+| Component | Old Version | New Version         |
+|-----------|-------------|---------------------|
+| Spring Boot | 3.5.10 | 4.0.2               |
+| SpringDoc OpenAPI | 2.3.0 | 2.8.4               |
+| Java | 21 | 25                  |
+| Maven Compiler Plugin | 3.15.0 | 3.15.0 (unchanged)  |
 | Lombok | 1.18.42 | 1.18.42 (unchanged) |
 
 ### Breaking Changes & Compatibility
@@ -20,7 +20,7 @@ This document outlines the changes made to upgrade the Kafka application from Sp
 Spring Boot 4.0 is a major release with several important changes:
 
 - **Jakarta EE 11**: Requires Jakarta EE 11 (previously Jakarta EE 10)
-- **Minimum Java Version**: Java 21 (we're already using this)
+- **Minimum Java Version**: Java 25 (we're already using this)
 - **Spring Framework 7**: Updated to Spring Framework 7.0
 - **Spring Kafka**: Updated to latest compatible version
 
@@ -65,7 +65,7 @@ This ensures proper deserialization when producer and consumer have different pa
 ## Migration Steps
 
 ### 1. Prerequisites
-- Java 21 installed
+- Java 25 installed
 - Maven 3.9+
 - Docker and Docker Compose
 - Git
@@ -87,7 +87,7 @@ git pull origin main
 
 ```bash
 # Start infrastructure
-docker-compose up -d kafka zookeeper
+docker-compose up -d kafka
 
 # Build and start services
 ./start.sh
