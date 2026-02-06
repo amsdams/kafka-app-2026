@@ -5,16 +5,21 @@ spring:
   application:
     name: consumer-service
   kafka:
+    # KRaft only requires bootstrap-servers
     bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
     consumer:
       group-id: user-events-consumer-group
       auto-offset-reset: earliest
+      # FIXED: For manual ack-mode, auto-commit should be false
+      enable-auto-commit: false
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
+        # These remain valid for the JsonDeserializer in Boot 4
         spring.json.trusted.packages: "*"
         spring.json.type.mapping: com.example.producer.model.UserEvent:com.example.consumer.model.UserEvent
     listener:
+      # Valid: Ensures you control offsets in your @KafkaListener code
       ack-mode: manual
 
 management:
@@ -25,10 +30,16 @@ management:
   endpoint:
     health:
       show-details: always
-springdoc.api-docs.path: /api-docs
-springdoc.swagger-ui.path: /swagger-ui.html
-springdoc.swagger-ui.operationsSorter: method
-springdoc.swagger-ui.tagsSorter: alpha
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+
+# Custom property remains fine
 kafka:
   topic:
     name: user-events
