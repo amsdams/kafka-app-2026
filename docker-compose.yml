@@ -33,7 +33,7 @@ services:
 
   producer-service:
     build:
-      context: producer-service
+      context: ./producer-service
       dockerfile: Dockerfile
     container_name: producer-service
     ports:
@@ -47,7 +47,7 @@ services:
 
   consumer-service:
     build:
-      context: consumer-service
+      context: ./consumer-service
       dockerfile: Dockerfile
     container_name: consumer-service
     ports:
