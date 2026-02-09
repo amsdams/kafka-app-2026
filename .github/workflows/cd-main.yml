@@ -24,7 +24,7 @@ jobs:
     
     strategy:
       matrix:
-        service: [shared-models, consumer-service, producer-service]
+        service: [consumer-service, producer-service]
     
     steps:
       - name: Checkout code
@@ -36,7 +36,10 @@ jobs:
           distribution: 'temurin'
           java-version: '25'
           cache: 'maven'
-      
+      - name: Install Parent and Shared Models
+        run: |
+          mvn install -N -B
+          mvn install -pl shared-models -B -DskipTests
       - name: Build and test ${{ matrix.service }}
         run: |
           cd ${{ matrix.service }}
@@ -59,7 +62,7 @@ jobs:
     
     strategy:
       matrix:
-        service: [shared-models, consumer-service, producer-service]
+        service: [consumer-service, producer-service]
     
     steps:
       - name: Checkout code
