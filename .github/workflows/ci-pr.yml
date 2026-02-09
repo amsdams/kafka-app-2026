@@ -102,7 +102,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          dockerfile: ./${{ matrix.service }}/Dockerfile
+          file: ./${{ matrix.service }}/Dockerfile
           push: false
           tags: ${{ matrix.service }}:pr-${{ github.event.pull_request.number }}
           cache-from: type=gha
