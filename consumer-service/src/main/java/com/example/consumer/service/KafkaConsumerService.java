@@ -1,6 +1,10 @@
 package com.example.consumer.service;
 
-import com.example.consumer.model.UserEvent;
+import com.example.common.constants.Topics;
+import com.example.common.model.OrderEvent;
+import com.example.common.model.UserEvent;
+import com.example.consumer.handler.EventHandler;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
@@ -9,45 +13,81 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class KafkaConsumerService {
 
+    private final List<EventHandler<UserEvent>> userEventHandlers;
+    private final List<EventHandler<OrderEvent>> orderEventHandlers;
+
     @KafkaListener(
-        topics = "${kafka.topic.name}",
+        topics = Topics.USER_EVENTS,
         groupId = "${spring.kafka.consumer.group-id}",
-        containerFactory = "kafkaListenerContainerFactory"
+        containerFactory = "userEventKafkaListenerContainerFactory"
     )
-    public void consume(
+    public void consumeUserEvent(
             @Payload UserEvent event,
             @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
             @Header(KafkaHeaders.OFFSET) long offset,
             Acknowledgment acknowledgment
     ) {
         try {
-            log.info("Received message from partition: {}, offset: {}", partition, offset);
-            log.info("Processing event: {}", event);
+            log.info("Received UserEvent from partition: {}, offset: {}", partition, offset);
+            log.info("UserEvent details: {}", event);
             
-            // Process the event (business logic goes here)
-            processEvent(event);
+            // Find appropriate handler
+            userEventHandlers.stream()
+                .filter(handler -> handler.supports(event.getEventType()))
+                .findFirst()
+                .ifPresentOrElse(
+                    handler -> handler.handle(event),
+                    () -> log.warn("No handler found for event type: {}", event.getEventType())
+                );
             
-            // Manually acknowledge the message
             acknowledgment.acknowledge();
-            log.info("Message acknowledged successfully");
+            log.info("UserEvent acknowledged successfully");
             
         } catch (Exception e) {
-            log.error("Error processing message: {}", event, e);
-            // In production, you might want to send to a DLQ (Dead Letter Queue)
+            log.error("Error processing UserEvent: {}", event, e);
+            // TODO: Send to DLQ or implement retry logic
+            acknowledgment.acknowledge(); // Still acknowledge to avoid infinite reprocessing
         }
     }
 
-    private void processEvent(UserEvent event) {
-        // Simulate business logic processing
-        log.info("Processing user event for user: {} with event type: {}", 
-            event.getUsername(), 
-            event.getEventType());
-        
-        // Add your business logic here
-        // e.g., save to database, send notifications, etc.
+    @KafkaListener(
+        topics = Topics.ORDER_EVENTS,
+        groupId = "${spring.kafka.consumer.group-id}",
+        containerFactory = "orderEventKafkaListenerContainerFactory"
+    )
+    public void consumeOrderEvent(
+            @Payload OrderEvent event,
+            @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
+            @Header(KafkaHeaders.OFFSET) long offset,
+            Acknowledgment acknowledgment
+    ) {
+        try {
+            log.info("Received OrderEvent from partition: {}, offset: {}", partition, offset);
+            log.info("OrderEvent details: {}", event);
+            
+            // Find appropriate handler
+            orderEventHandlers.stream()
+                .filter(handler -> handler.supports(event.getEventType()))
+                .findFirst()
+                .ifPresentOrElse(
+                    handler -> handler.handle(event),
+                    () -> log.warn("No handler found for event type: {}", event.getEventType())
+                );
+            
+            acknowledgment.acknowledge();
+            log.info("OrderEvent acknowledged successfully");
+            
+        } catch (Exception e) {
+            log.error("Error processing OrderEvent: {}", event, e);
+            // TODO: Send to DLQ or implement retry logic
+            acknowledgment.acknowledge(); // Still acknowledge to avoid infinite reprocessing
+        }
     }
 }
