@@ -10,15 +10,10 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       acks: all
-      # In Kafka 4.0, 'retries' defaults to Integer.MAX_VALUE.
-      # It is better to control retries via delivery.timeout.ms.
       retries: 3
       properties:
-        # Kafka 4.0 changed the default linger.ms from 0 to 5ms for better batching.
-        # Your '1' is still valid if you prioritize ultra-low latency.
         linger.ms: 1
         batch.size: 16384
-        # Recommended for Spring Boot 4: Ensure exactly-once semantics
         enable.idempotence: true
 
 management:
@@ -30,7 +25,6 @@ management:
     health:
       show-details: always
 
-# Updated SpringDoc 2.x/3.x format used in Boot 4
 springdoc:
   api-docs:
     path: /api-docs
@@ -38,7 +32,3 @@ springdoc:
     path: /swagger-ui.html
     operations-sorter: method
     tags-sorter: alpha
-
-kafka:
-  topic:
-    name: user-events

@@ -1,13 +1,17 @@
 package com.example.producer.controller;
 
-import com.example.producer.model.UserEvent;
+import com.example.common.constants.Topics;
+import com.example.common.model.OrderEvent;
+import com.example.common.model.UserEvent;
+import com.example.producer.dto.EventResponse;
+import com.example.producer.dto.OrderEventRequest;
+import com.example.producer.dto.UserEventRequest;
+import com.example.producer.mapper.EventMapper;
 import com.example.producer.service.KafkaProducerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/events")
@@ -15,15 +19,38 @@ import java.util.UUID;
 public class ProducerController {
 
     private final KafkaProducerService producerService;
+    private final EventMapper eventMapper;
 
-    @PostMapping("/publish")
-    public ResponseEntity<String> publishEvent(@RequestBody UserEvent event) {
-        event.setId(UUID.randomUUID().toString());
-        event.setTimestamp(LocalDateTime.now());
+    @PostMapping("/users")
+    public ResponseEntity<EventResponse> publishUserEvent(
+            @Valid @RequestBody UserEventRequest request) {
         
-        producerService.sendMessage(event);
+        UserEvent event = eventMapper.toUserEvent(request);
+        producerService.sendMessage(Topics.USER_EVENTS, event.getId(), event);
         
-        return ResponseEntity.ok("Event published successfully with ID: " + event.getId());
+        EventResponse response = eventMapper.toResponse(
+            event.getId(), 
+            event.getCorrelationId(), 
+            request.getEventType()
+        );
+        
+        return ResponseEntity.ok(response);
+    }
+    
+    @PostMapping("/orders")
+    public ResponseEntity<EventResponse> publishOrderEvent(
+            @Valid @RequestBody OrderEventRequest request) {
+        
+        OrderEvent event = eventMapper.toOrderEvent(request);
+        producerService.sendMessage(Topics.ORDER_EVENTS, event.getId(), event);
+        
+        EventResponse response = eventMapper.toResponse(
+            event.getId(), 
+            event.getCorrelationId(), 
+            request.getEventType()
+        );
+        
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/health")

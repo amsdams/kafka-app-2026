@@ -8,6 +8,7 @@ on:
     paths:
       - '**.java'
       - '**/pom.xml'
+      - 'shared-models/**'
       - 'consumer-service/**'
       - 'producer-service/**'
       - '.github/workflows/**'
@@ -31,7 +32,11 @@ jobs:
           distribution: 'temurin'
           java-version: '25'
           cache: 'maven'
-      
+      - name: Install Parent and Shared Models
+        run: |
+          mvn install -N -B
+          mvn install -pl shared-models -B -DskipTests
+
       - name: Build ${{ matrix.service }}
         run: |
           cd ${{ matrix.service }}
@@ -71,7 +76,7 @@ jobs:
       
       - name: Run Maven verify
         run: |
-          for service in consumer-service producer-service; do
+          for service in shared-models consumer-service producer-service; do
             cd $service
             mvn verify -DskipTests -B
             cd ..
@@ -96,7 +101,8 @@ jobs:
       - name: Build Docker image for ${{ matrix.service }}
         uses: docker/build-push-action@v6
         with:
-          context: ./${{ matrix.service }}
+          context: .
+          file: ./${{ matrix.service }}/Dockerfile
           push: false
           tags: ${{ matrix.service }}:pr-${{ github.event.pull_request.number }}
           cache-from: type=gha
@@ -136,7 +142,7 @@ jobs:
 
       - name: Run integration tests
         run: |
-          for service in consumer-service producer-service; do
+          for service in shared-models consumer-service producer-service; do
             cd $service
             # Ensure tests point to the Docker-exposed port if necessary
             mvn verify -B

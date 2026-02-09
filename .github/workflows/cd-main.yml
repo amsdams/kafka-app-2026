@@ -7,6 +7,7 @@ on:
     paths:
       - '**.java'
       - '**/pom.xml'
+      - 'shared-models/**'
       - 'consumer-service/**'
       - 'producer-service/**'
       - 'docker-compose.yml'
@@ -35,7 +36,10 @@ jobs:
           distribution: 'temurin'
           java-version: '25'
           cache: 'maven'
-      
+      - name: Install Parent and Shared Models
+        run: |
+          mvn install -N -B
+          mvn install -pl shared-models -B -DskipTests
       - name: Build and test ${{ matrix.service }}
         run: |
           cd ${{ matrix.service }}
@@ -87,7 +91,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./${{ matrix.service }}
+          context: .
+          file: ./${{ matrix.service }}/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

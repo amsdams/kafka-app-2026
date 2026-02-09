@@ -29,7 +29,8 @@ services:
 
   producer-service:
     build:
-      context: ./producer-service
+      context: .
+      dockerfile: producer-service/Dockerfile
     container_name: producer-service
     ports:
       - "8081:8081"
@@ -42,7 +43,8 @@ services:
 
   consumer-service:
     build:
-      context: ./consumer-service
+      context: .
+      dockerfile: consumer-service/Dockerfile
     container_name: consumer-service
     ports:
       - "8082:8082"
