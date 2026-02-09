@@ -7,6 +7,7 @@ on:
     paths:
       - '**.java'
       - '**/pom.xml'
+      - 'shared-models/**'
       - 'consumer-service/**'
       - 'producer-service/**'
       - 'docker-compose.yml'
@@ -23,7 +24,7 @@ jobs:
     
     strategy:
       matrix:
-        service: [consumer-service, producer-service]
+        service: [shared-models, consumer-service, producer-service]
     
     steps:
       - name: Checkout code
@@ -58,7 +59,7 @@ jobs:
     
     strategy:
       matrix:
-        service: [consumer-service, producer-service]
+        service: [shared-models, consumer-service, producer-service]
     
     steps:
       - name: Checkout code

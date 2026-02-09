@@ -8,6 +8,7 @@ on:
     paths:
       - '**.java'
       - '**/pom.xml'
+      - 'shared-models/**'
       - 'consumer-service/**'
       - 'producer-service/**'
       - '.github/workflows/**'
@@ -19,7 +20,7 @@ jobs:
     
     strategy:
       matrix:
-        service: [consumer-service, producer-service]
+        service: [shared-models, consumer-service, producer-service]
     
     steps:
       - name: Checkout code
@@ -71,7 +72,7 @@ jobs:
       
       - name: Run Maven verify
         run: |
-          for service in consumer-service producer-service; do
+          for service in shared-models consumer-service producer-service; do
             cd $service
             mvn verify -DskipTests -B
             cd ..
@@ -84,7 +85,7 @@ jobs:
     
     strategy:
       matrix:
-        service: [consumer-service, producer-service]
+        service: [shared-models, consumer-service, producer-service]
     
     steps:
       - name: Checkout code
@@ -136,7 +137,7 @@ jobs:
 
       - name: Run integration tests
         run: |
-          for service in consumer-service producer-service; do
+          for service in shared-models consumer-service producer-service; do
             cd $service
             # Ensure tests point to the Docker-exposed port if necessary
             mvn verify -B
