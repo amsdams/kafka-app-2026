@@ -17,7 +17,7 @@ public class OrderEvent {
     private String userId;
     private String productName;
     private BigDecimal amount;
-    private String eventType;
+    private OrderEventType eventType;
     private LocalDateTime timestamp;
     private String correlationId;
 }

@@ -1,7 +1,9 @@
 package com.example.producer.dto;
 
+import com.example.common.model.UserEventType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +19,6 @@ public class UserEventRequest {
     @NotBlank(message = "Email is required")
     private String email;
     
-    @NotBlank(message = "Event type is required")
-    private String eventType;
+    @NotNull(message = "Event type is required")
+    private UserEventType eventType;
 }

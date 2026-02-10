@@ -40,7 +40,7 @@ public class KafkaConsumerService {
             
             // Find appropriate handler
             userEventHandlers.stream()
-                .filter(handler -> handler.supports(event.getEventType()))
+                .filter(handler -> handler.supports(event))
                 .findFirst()
                 .ifPresentOrElse(
                     handler -> handler.handle(event),
@@ -74,7 +74,7 @@ public class KafkaConsumerService {
             
             // Find appropriate handler
             orderEventHandlers.stream()
-                .filter(handler -> handler.supports(event.getEventType()))
+                .filter(handler -> handler.supports(event))
                 .findFirst()
                 .ifPresentOrElse(
                     handler -> handler.handle(event),

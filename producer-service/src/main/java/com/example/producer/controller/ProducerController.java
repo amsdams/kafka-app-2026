@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/events")
+@RequestMapping("/api/producer")
 @RequiredArgsConstructor
 public class ProducerController {
 
@@ -31,7 +31,7 @@ public class ProducerController {
         EventResponse response = eventMapper.toResponse(
             event.getId(), 
             event.getCorrelationId(), 
-            request.getEventType()
+            request.getEventType().toString()
         );
         
         return ResponseEntity.ok(response);
@@ -47,7 +47,7 @@ public class ProducerController {
         EventResponse response = eventMapper.toResponse(
             event.getId(), 
             event.getCorrelationId(), 
-            request.getEventType()
+            request.getEventType().toString()
         );
         
         return ResponseEntity.ok(response);

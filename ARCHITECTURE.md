@@ -27,7 +27,7 @@
 │  │  Port: 8081     │              │ Partition 2│  │ Port: 8082  ││
 │  │                 │              └────────────┘  │             ││
 │  │  REST API       │                              │ 3 Consumers ││
-│  │  /api/events    │                              │ (Concurrent)││
+│  │  /api/producer    │                              │ (Concurrent)││
 │  └─────────────────┘                              └─────────────┘│
 │           ▲                                              │        │
 └───────────┼──────────────────────────────────────────────┼────────┘
@@ -47,7 +47,7 @@
 
 ```
 1. Client Request
-   └─► POST /api/events/publish
+   └─► POST /api/producer/publish
        └─► Producer Service receives JSON
 
 2. Producer Processing

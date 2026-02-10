@@ -16,7 +16,7 @@ sleep 5
 
 # Test 1: Create User Event
 echo -e "\n${GREEN}📝 Test 1: Creating User Event${NC}"
-USER_RESPONSE=$(curl -s -X POST http://localhost:8081/api/events/users \
+USER_RESPONSE=$(curl -s -X POST http://localhost:8081/api/producer/users \
   -H "Content-Type: application/json" \
   -d '{
     "username": "john_doe",
@@ -32,7 +32,7 @@ sleep 2
 
 # Test 2: Create Order Event
 echo -e "\n${GREEN}📦 Test 2: Creating Order Event (linked to user)${NC}"
-ORDER_RESPONSE=$(curl -s -X POST http://localhost:8081/api/events/orders \
+ORDER_RESPONSE=$(curl -s -X POST http://localhost:8081/api/producer/orders \
   -H "Content-Type: application/json" \
   -d "{
     \"userId\": \"$USER_ID\",
@@ -51,7 +51,7 @@ sleep 2
 echo -e "\n${GREEN}👥 Test 3: Creating Multiple Users${NC}"
 for i in {1..3}; do
   echo "Creating user $i..."
-  curl -s -X POST http://localhost:8081/api/events/users \
+  curl -s -X POST http://localhost:8081/api/producer/users \
     -H "Content-Type: application/json" \
     -d "{
       \"username\": \"user_$i\",
@@ -68,7 +68,7 @@ AMOUNTS=(29.99 79.99 199.99)
 
 for i in {0..2}; do
   echo "Creating order for ${PRODUCTS[$i]}..."
-  curl -s -X POST http://localhost:8081/api/events/orders \
+  curl -s -X POST http://localhost:8081/api/producer/orders \
     -H "Content-Type: application/json" \
     -d "{
       \"userId\": \"$USER_ID\",
@@ -81,7 +81,7 @@ done
 
 # Test 5: Update User Event
 echo -e "\n${GREEN}🔄 Test 5: Creating User Update Event${NC}"
-curl -s -X POST http://localhost:8081/api/events/users \
+curl -s -X POST http://localhost:8081/api/producer/users \
   -H "Content-Type: application/json" \
   -d '{
     "username": "john_doe_updated",
@@ -93,7 +93,7 @@ sleep 2
 
 # Test 6: Order Completion
 echo -e "\n${GREEN}✅ Test 6: Creating Order Completion Event${NC}"
-curl -s -X POST http://localhost:8081/api/events/orders \
+curl -s -X POST http://localhost:8081/api/producer/orders \
   -H "Content-Type: application/json" \
   -d "{
     \"userId\": \"$USER_ID\",

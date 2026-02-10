@@ -15,7 +15,7 @@ public class UserEvent {
     private String id;
     private String username;
     private String email;
-    private String eventType;
+    private UserEventType eventType;
     private LocalDateTime timestamp;
     private String correlationId;
 }

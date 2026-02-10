@@ -39,7 +39,7 @@ curl http://localhost:8081/actuator/health  # Producer
 curl http://localhost:8082/actuator/health  # Consumer
 
 # Send test message
-curl -X POST http://localhost:8081/api/events/publish \
+curl -X POST http://localhost:8081/api/producer/publish \
   -H "Content-Type: application/json" \
   -d '{
     "username": "test_user",
@@ -414,7 +414,7 @@ alias producer-health='curl http://localhost:8081/actuator/health | jq'
 alias producer-shell='docker exec -it producer-service /bin/sh'
 
 # Testing
-alias send-test='curl -X POST http://localhost:8081/api/events/publish -H "Content-Type: application/json" -d '"'"'{"username":"test","email":"test@example.com","eventType":"TEST"}'"'"
+alias send-test='curl -X POST http://localhost:8081/api/producer/publish -H "Content-Type: application/json" -d '"'"'{"username":"test","email":"test@example.com","eventType":"TEST"}'"'"
 
 # Kafka commands
 alias kafka-topics='docker exec -it kafka kafka-topics --list --bootstrap-server localhost:9092'

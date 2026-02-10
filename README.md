@@ -191,7 +191,7 @@ TopicBuilder
 ### Create User Event
 
 ```bash
-curl -X POST http://localhost:8081/api/events/users \
+curl -X POST http://localhost:8081/api/producer/users \
   -H "Content-Type: application/json" \
   -d '{
     "username": "alice",
@@ -213,7 +213,7 @@ curl -X POST http://localhost:8081/api/events/users \
 ### Create Order Event
 
 ```bash
-curl -X POST http://localhost:8081/api/events/orders \
+curl -X POST http://localhost:8081/api/producer/orders \
   -H "Content-Type: application/json" \
   -d '{
     "userId": "user-123",
