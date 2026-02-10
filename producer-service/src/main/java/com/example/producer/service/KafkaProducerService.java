@@ -4,6 +4,7 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
@@ -31,8 +32,8 @@ public class KafkaProducerService {
     private final Timer sendTimer;
 
     public KafkaProducerService(
-            KafkaTemplate<String, Object> kafkaTemplate,
-            MeterRegistry meterRegistry) {
+            @NonNull KafkaTemplate<String, Object> kafkaTemplate,
+            @NonNull MeterRegistry meterRegistry) {
         this.kafkaTemplate = kafkaTemplate;
 
         // BEST PRACTICE: Initialize metrics for monitoring
@@ -56,7 +57,7 @@ public class KafkaProducerService {
      * Convenience method - delegates to sendMessageAsync
      * Use this for simpler code when you don't need the Future
      */
-    public <T> void sendMessage(String topic, String key, T event) {
+    public <T> void sendMessage(@NonNull String topic, @NonNull String key, @NonNull T event) {
         sendMessageAsync(topic, key, event);
     }
 
@@ -65,7 +66,7 @@ public class KafkaProducerService {
      * Returns CompletableFuture for non-blocking operations
      */
     public <T> CompletableFuture<SendResult<String, Object>> sendMessageAsync(
-            String topic, String key, T event) {
+            @NonNull String topic, @NonNull String key, @NonNull T event) {
 
         long startTime = System.nanoTime();
 
@@ -117,7 +118,7 @@ public class KafkaProducerService {
      * Use sparingly - async is preferred for performance
      */
     public <T> SendResult<String, Object> sendMessageSync(
-            String topic, String key, T event) throws Exception {
+            @NonNull String topic, @NonNull String key, @NonNull T event) throws Exception {
 
         long startTime = System.nanoTime();
 
@@ -158,7 +159,7 @@ public class KafkaProducerService {
      * BEST PRACTICE: Send with custom headers for metadata
      */
     public <T> CompletableFuture<SendResult<String, Object>> sendMessageWithHeaders(
-            String topic, String key, T event, java.util.Map<String, String> headers) {
+            @NonNull String topic, @NonNull String key, @NonNull T event, java.util.Map<String, String> headers) {
 
         log.debug("Sending message with headers: topic={}, key={}, headers={}",
                 topic, key, headers);

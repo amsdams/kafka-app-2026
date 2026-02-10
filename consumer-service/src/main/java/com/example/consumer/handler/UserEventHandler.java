@@ -3,6 +3,7 @@ package com.example.consumer.handler;
 import com.example.common.model.UserEvent;
 import com.example.common.model.UserEventType;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -10,13 +11,7 @@ import org.springframework.stereotype.Component;
 public class UserEventHandler implements EventHandler<UserEvent, UserEventType> {
 
     @Override
-    public void handle(UserEvent event) {
-        // Check if the event is null to prevent NPE
-        if (event == null) {
-            log.error("Received null UserEvent in UserEventHandler");
-            return;
-        }
-        
+    public void handle(@NonNull UserEvent event) {
         log.info("Processing UserEvent: {}", event);
 
         switch (event.getEventType()) {

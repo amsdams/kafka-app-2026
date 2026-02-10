@@ -5,6 +5,7 @@ import com.example.common.model.UserEvent;
 import com.example.producer.dto.EventResponse;
 import com.example.producer.dto.OrderEventRequest;
 import com.example.producer.dto.UserEventRequest;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -13,12 +14,7 @@ import java.util.UUID;
 @Component
 public class EventMapper {
     
-    public UserEvent toUserEvent(UserEventRequest request) {
-        // Added null check for request to prevent NPE
-        if (request == null) {
-            throw new IllegalArgumentException("UserEventRequest cannot be null");
-        }
-        
+    public @NonNull UserEvent toUserEvent(@NonNull UserEventRequest request) {
         return UserEvent.builder()
                 .id(UUID.randomUUID().toString())
                 .username(request.getUsername())
@@ -29,12 +25,7 @@ public class EventMapper {
                 .build();
     }
     
-    public OrderEvent toOrderEvent(OrderEventRequest request) {
-        // Added null check for request to prevent NPE
-        if (request == null) {
-            throw new IllegalArgumentException("OrderEventRequest cannot be null");
-        }
-        
+    public @NonNull OrderEvent toOrderEvent(@NonNull OrderEventRequest request) {
         return OrderEvent.builder()
                 .id(UUID.randomUUID().toString())
                 .userId(request.getUserId())
@@ -46,16 +37,13 @@ public class EventMapper {
                 .build();
     }
     
-    public EventResponse toResponse(String eventId, String correlationId, String eventType) {
+    public @NonNull EventResponse toResponse(@NonNull String eventId, @NonNull String correlationId, @NonNull String eventType) {
         // Added null checks for parameters to prevent NPE
-        String eventTypeSafe = eventType != null ? eventType : "UNKNOWN";
-        String eventIdSafe = eventId != null ? eventId : "NO_ID";
-        String correlationIdSafe = correlationId != null ? correlationId : "NO_CORRELATION";
-        
+
         return EventResponse.builder()
-                .eventId(eventIdSafe)
-                .correlationId(correlationIdSafe)
-                .message(eventTypeSafe + " event published successfully")
+                .eventId(eventId)
+                .correlationId(correlationId)
+                .message(eventType + " event published successfully")
                 .timestamp(LocalDateTime.now().toString())
                 .build();
     }
