@@ -10,7 +10,8 @@ COPY shared-models/pom.xml shared-models/
 COPY shared-models/src shared-models/src
 
 # Build shared-models
-RUN mvn -f shared-models/pom.xml clean install -DskipTests
+RUN mvn install -N
+RUN mvn -X -f shared-models/pom.xml clean install -DskipTests
 
 # Copy consumer-service
 COPY consumer-service/pom.xml consumer-service/

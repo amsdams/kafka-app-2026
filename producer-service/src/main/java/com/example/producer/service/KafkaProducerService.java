@@ -53,6 +53,14 @@ public class KafkaProducerService {
     }
 
     /**
+     * Convenience method - delegates to sendMessageAsync
+     * Use this for simpler code when you don't need the Future
+     */
+    public <T> void sendMessage(String topic, String key, T event) {
+        sendMessageAsync(topic, key, event);
+    }
+
+    /**
      * BEST PRACTICE: Async send with proper callback handling
      * Returns CompletableFuture for non-blocking operations
      */

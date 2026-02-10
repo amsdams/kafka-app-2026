@@ -3,7 +3,7 @@ version: '3.8'
 services:
   # Kafka Broker with Production Settings
   kafka:
-    image: apache/kafka:7.5.0
+    image: confluentinc/cp-kafka:7.8.0
     container_name: kafka
     hostname: kafka
     ports:
