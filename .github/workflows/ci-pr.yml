@@ -76,6 +76,8 @@ jobs:
       
       - name: Run Maven verify
         run: |
+          mvn install -N 
+          mvn -f shared-models/pom.xml clean install -DskipTests
           for service in shared-models consumer-service producer-service; do
             cd $service
             mvn verify -DskipTests -B
@@ -142,6 +144,8 @@ jobs:
 
       - name: Run integration tests
         run: |
+          mvn install -N 
+          mvn -f shared-models/pom.xml clean install -DskipTests
           for service in shared-models consumer-service producer-service; do
             cd $service
             # Ensure tests point to the Docker-exposed port if necessary
