@@ -1,30 +1,85 @@
 server:
   port: 8082
+  shutdown: graceful  # Best Practice: Graceful shutdown
 
 spring:
   application:
     name: consumer-service
+  lifecycle:
+    timeout-per-shutdown-phase: 30s  # Best Practice: Allow time to finish processing
+  
   kafka:
     bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
+    
     consumer:
-      group-id: events-consumer-group
-      auto-offset-reset: earliest
+      # ===== BEST PRACTICE: Consumer Group Configuration =====
+      group-id: ${spring.application.name}-${ENVIRONMENT:dev}-consumer-group
+      
+      # Serialization
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      
+      # ===== BEST PRACTICE: Offset Management =====
+      enable-auto-commit: false  # Manual commit for reliability
+      auto-offset-reset: earliest  # Don't lose data on first run
+      
       properties:
+        # ===== BEST PRACTICE: Deserialization Configuration =====
         spring.json.trusted.packages: "com.example.common.model"
-        spring.json.type.mapping: userEvent:com.example.common.model.UserEvent,orderEvent:com.example.common.model.OrderEvent
+        spring.json.type.mapping: |
+          userEvent:com.example.common.model.UserEvent,
+          orderEvent:com.example.common.model.OrderEvent
+        
+        # ===== BEST PRACTICE: Session Management =====
+        # Balance between rebalance speed and network hiccups
+        session.timeout.ms: 30000      # 30 seconds
+        heartbeat.interval.ms: 3000    # 3 seconds (session.timeout.ms / 10)
+        
+        # ===== BEST PRACTICE: Poll Configuration =====
+        # Maximum time between poll() calls before consumer is considered dead
+        max.poll.interval.ms: 300000   # 5 minutes (adjust based on processing time)
+        # Number of records per poll (controls memory and processing batch size)
+        max.poll.records: 500          # Tune based on message size and processing time
+        
+        # ===== BEST PRACTICE: Fetch Configuration =====
+        # Balance between latency and throughput
+        fetch.min.bytes: 1024          # Wait for at least 1KB
+        fetch.max.wait.ms: 500         # Or wait max 500ms
+        max.partition.fetch.bytes: 1048576  # 1MB per partition
+        
+        # ===== BEST PRACTICE: Isolation Level =====
+        # Read only committed messages (for exactly-once semantics)
+        isolation.level: read_committed
+        
+        # ===== BEST PRACTICE: Connection Management =====
+        connections.max.idle.ms: 540000  # 9 minutes (longer than producer)
+        
+        # ===== BEST PRACTICE: Partition Assignment =====
+        # Minimize rebalance overhead with cooperative strategy
+        partition.assignment.strategy: org.apache.kafka.clients.consumer.CooperativeStickyAssignor
 
+# ===== BEST PRACTICE: Monitoring and Observability =====
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,prometheus
+        include: health,info,prometheus,metrics
   endpoint:
     health:
       show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+      environment: ${ENVIRONMENT:dev}
+  # ===== BEST PRACTICE: Health Indicators =====
+  health:
+    kafka:
+      enabled: true
 
-
+# ===== BEST PRACTICE: API Documentation =====
 springdoc:
   api-docs:
     path: /api-docs
@@ -33,7 +88,24 @@ springdoc:
     operations-sorter: method
     tags-sorter: alpha
 
-# Custom property remains fine
+# ===== BEST PRACTICE: Logging =====
+logging:
+  level:
+    org.apache.kafka: INFO
+    org.springframework.kafka: INFO
+    com.example.consumer: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# ===== BEST PRACTICE: Retry and DLQ Configuration =====
 kafka:
-  topic:
-    name: user-events
+  retry:
+    max-attempts: 3
+    backoff:
+      initial-interval: 1000   # 1 second
+      multiplier: 2.0          # Exponential backoff
+      max-interval: 10000      # Max 10 seconds
+  dlq:
+    enabled: true
+    suffix: .DLQ

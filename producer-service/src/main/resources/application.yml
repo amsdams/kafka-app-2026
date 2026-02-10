@@ -1,30 +1,79 @@
 server:
   port: 8081
+  shutdown: graceful  # Best Practice: Graceful shutdown
 
 spring:
   application:
     name: producer-service
+  lifecycle:
+    timeout-per-shutdown-phase: 30s  # Best Practice: Allow time for graceful shutdown
+  
   kafka:
     bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
+    
     producer:
+      # Serialization
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      acks: all
-      retries: 3
+      
+      # ===== BEST PRACTICE: Delivery Guarantees =====
+      acks: all  # Wait for all in-sync replicas (strongest guarantee)
+      
+      # ===== BEST PRACTICE: Idempotence =====
+      # Prevents duplicates - critical for exactly-once semantics
       properties:
-        linger.ms: 1
-        batch.size: 16384
         enable.idempotence: true
+        
+        # ===== BEST PRACTICE: Compression =====
+        # Reduces network bandwidth and storage (50-70% reduction)
+        compression.type: snappy  # Options: none, gzip, snappy, lz4, zstd
+        
+        # ===== BEST PRACTICE: Batching for Performance =====
+        # Wait up to 10ms to batch messages (improves throughput)
+        linger.ms: 10  # Balance between latency and throughput
+        batch.size: 32768  # 32KB batch size (increased from default 16KB)
+        
+        # ===== BEST PRACTICE: Timeouts =====
+        # Total time for send including retries and waiting for acks
+        delivery.timeout.ms: 120000  # 2 minutes total timeout
+        request.timeout.ms: 30000    # 30 seconds per request (must be < delivery.timeout.ms)
+        
+        # ===== BEST PRACTICE: Buffer Configuration =====
+        buffer.memory: 67108864  # 64 MB buffer for batching
+        max.block.ms: 60000      # Wait up to 60s when buffer is full
+        
+        # ===== BEST PRACTICE: Connection Management =====
+        connections.max.idle.ms: 180000  # 3 minutes (keep connections alive)
+        
+        # ===== BEST PRACTICE: Metadata =====
+        metadata.max.age.ms: 300000  # Refresh metadata every 5 minutes
+        
+        # ===== BEST PRACTICE: Retries =====
+        # Note: With idempotence, retries are handled by delivery.timeout.ms
+        max.in.flight.requests.per.connection: 5  # Parallel requests (safe with idempotence)
 
+# ===== BEST PRACTICE: Monitoring and Observability =====
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,prometheus
+        include: health,info,prometheus,metrics
   endpoint:
     health:
       show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+      environment: ${ENVIRONMENT:dev}
+  # ===== BEST PRACTICE: Health Indicators =====
+  health:
+    kafka:
+      enabled: true
 
+# ===== BEST PRACTICE: API Documentation =====
 springdoc:
   api-docs:
     path: /api-docs
@@ -32,3 +81,13 @@ springdoc:
     path: /swagger-ui.html
     operations-sorter: method
     tags-sorter: alpha
+
+# ===== BEST PRACTICE: Logging =====
+logging:
+  level:
+    org.apache.kafka: INFO
+    org.springframework.kafka: INFO
+    com.example.producer: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

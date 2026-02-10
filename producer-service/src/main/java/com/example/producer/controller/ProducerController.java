@@ -26,7 +26,7 @@ public class ProducerController {
             @Valid @RequestBody UserEventRequest request) {
         
         UserEvent event = eventMapper.toUserEvent(request);
-        producerService.sendMessage(Topics.USER_EVENTS, event.getId(), event);
+        producerService.sendMessageAsync(Topics.USER_EVENTS, event.getId(), event);
         
         EventResponse response = eventMapper.toResponse(
             event.getId(), 
@@ -42,7 +42,7 @@ public class ProducerController {
             @Valid @RequestBody OrderEventRequest request) {
         
         OrderEvent event = eventMapper.toOrderEvent(request);
-        producerService.sendMessage(Topics.ORDER_EVENTS, event.getId(), event);
+        producerService.sendMessageAsync(Topics.ORDER_EVENTS, event.getId(), event);
         
         EventResponse response = eventMapper.toResponse(
             event.getId(), 

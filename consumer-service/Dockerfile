@@ -1,41 +1,61 @@
+# Multi-stage build for optimized image size
 # Stage 1: Build
-FROM maven:3-eclipse-temurin-25-alpine AS build
-WORKDIR /app
+FROM maven:3.9-eclipse-temurin-25-alpine AS builder
 
-# 1. Copy the Parent POM
+WORKDIR /build
+
+# Copy parent pom and shared-models first (for layer caching)
 COPY pom.xml .
-
-# 2. Copy ALL module POMs (to satisfy the Parent's <modules> list)
 COPY shared-models/pom.xml shared-models/
-COPY producer-service/pom.xml producer-service/
-COPY consumer-service/pom.xml consumer-service/
-
-# 3. Copy the Shared Models SOURCE code
-# IMPORTANT: This must happen BEFORE building the consumer
 COPY shared-models/src shared-models/src
 
-# 4. Install the Parent and the Shared Models module
-# -N installs parent; then we install shared-models so its JAR is in the local repo
-RUN mvn install -N
-RUN mvn install -pl shared-models -DskipTests
+# Build shared-models
+RUN mvn -f shared-models/pom.xml clean install -DskipTests
 
-# 5. Copy Consumer Service SOURCE code
+# Copy consumer-service
+COPY consumer-service/pom.xml consumer-service/
 COPY consumer-service/src consumer-service/src
 
-# 6. Build the Consumer Service
-WORKDIR /app/consumer-service
-RUN mvn clean package -DskipTests -B
+# Build consumer-service
+RUN mvn -f consumer-service/pom.xml clean package -DskipTests
 
 # Stage 2: Runtime
 FROM eclipse-temurin:25-jre-alpine
+
+# Add metadata
+LABEL maintainer="your-team@example.com"
+LABEL description="Kafka Consumer Service with Best Practices"
+LABEL version="1.0.0"
+
+# Create non-root user for security
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
 WORKDIR /app
 
-# Create non-root user
-RUN addgroup -S spring && adduser -S spring -G spring
-USER spring:spring
+# Copy JAR from builder
+COPY --from=builder /build/consumer-service/target/*.jar app.jar
 
-# Copy JAR from build stage
-COPY --from=build /app/consumer-service/target/*.jar app.jar
+# Change ownership to non-root user
+RUN chown -R appuser:appgroup /app
 
-EXPOSE 8081
+# Switch to non-root user
+USER appuser
+
+# Expose port
+EXPOSE 8082
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:8082/actuator/health || exit 1
+
+# JVM options for production
+ENV JAVA_OPTS="-Xms1024m -Xmx2048m \
+  -XX:+UseG1GC \
+  -XX:MaxGCPauseMillis=200 \
+  -XX:+HeapDumpOnOutOfMemoryError \
+  -XX:HeapDumpPath=/app/logs/heap-dump.hprof \
+  -XX:+UseContainerSupport \
+  -XX:MaxRAMPercentage=75.0"
+
+# Run application
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
