@@ -37,9 +37,16 @@ public class KafkaConsumerService {
             Acknowledgment acknowledgment
     ) {
         try {
+            // Check if the received event is null to prevent NPE
+            if (event == null) {
+                log.error("Received null UserEvent from partition: {}, offset: {}", partition, offset);
+                acknowledgment.acknowledge();
+                return;
+            }
+            
             log.info("Received UserEvent from partition: {}, offset: {}", partition, offset);
             log.info("UserEvent details: {}", event);
-            
+
             // Find appropriate handler
             userEventHandlers.stream()
                 .filter(handler -> handler.supports(event.getEventType()))
@@ -48,10 +55,10 @@ public class KafkaConsumerService {
                     handler -> handler.handle(event),
                     () -> log.warn("No handler found for event type: {}", event.getEventType())
                 );
-            
+
             acknowledgment.acknowledge();
             log.info("UserEvent acknowledged successfully");
-            
+
         } catch (Exception e) {
             log.error("Error processing UserEvent: {}", event, e);
             // TODO: Send to DLQ or implement retry logic
@@ -71,9 +78,16 @@ public class KafkaConsumerService {
             Acknowledgment acknowledgment
     ) {
         try {
+            // Check if the received event is null to prevent NPE
+            if (event == null) {
+                log.error("Received null OrderEvent from partition: {}, offset: {}", partition, offset);
+                acknowledgment.acknowledge();
+                return;
+            }
+            
             log.info("Received OrderEvent from partition: {}, offset: {}", partition, offset);
             log.info("OrderEvent details: {}", event);
-            
+
             // Find appropriate handler
             orderEventHandlers.stream()
                 .filter(handler -> handler.supports(event.getEventType()))
@@ -82,10 +96,10 @@ public class KafkaConsumerService {
                     handler -> handler.handle(event),
                     () -> log.warn("No handler found for event type: {}", event.getEventType())
                 );
-            
+
             acknowledgment.acknowledge();
             log.info("OrderEvent acknowledged successfully");
-            
+
         } catch (Exception e) {
             log.error("Error processing OrderEvent: {}", event, e);
             // TODO: Send to DLQ or implement retry logic

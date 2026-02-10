@@ -11,6 +11,12 @@ public class OrderEventHandler implements EventHandler<OrderEvent, OrderEventTyp
 
     @Override
     public void handle(OrderEvent event) {
+        // Check if the event is null to prevent NPE
+        if (event == null) {
+            log.error("Received null OrderEvent in OrderEventHandler");
+            return;
+        }
+        
         log.info("Processing OrderEvent: {}", event);
 
         switch (event.getEventType()) {

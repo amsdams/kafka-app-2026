@@ -84,12 +84,17 @@ public class KafkaProducerService {
                 messagesSentCounter.increment();
 
                 // BEST PRACTICE: Structured logging with all context
-                log.info("Message sent successfully: topic={}, partition={}, offset={}, key={}, timestamp={}",
-                        result.getRecordMetadata().topic(),
-                        result.getRecordMetadata().partition(),
-                        result.getRecordMetadata().offset(),
-                        key,
-                        result.getRecordMetadata().timestamp());
+                // Added null check for result and its metadata to prevent NPE
+                if (result != null && result.getRecordMetadata() != null) {
+                    log.info("Message sent successfully: topic={}, partition={}, offset={}, key={}, timestamp={}",
+                            result.getRecordMetadata().topic(),
+                            result.getRecordMetadata().partition(),
+                            result.getRecordMetadata().offset(),
+                            key,
+                            result.getRecordMetadata().timestamp());
+                } else {
+                    log.warn("Message sent but metadata unavailable: topic={}, key={}", topic, key);
+                }
             } else {
                 // Failure
                 messagesFailedCounter.increment();
@@ -130,10 +135,15 @@ public class KafkaProducerService {
             sendTimer.record(duration, TimeUnit.NANOSECONDS);
             messagesSentCounter.increment();
 
-            log.info("Message sent synchronously: topic={}, partition={}, offset={}",
-                    result.getRecordMetadata().topic(),
-                    result.getRecordMetadata().partition(),
-                    result.getRecordMetadata().offset());
+            // Added null check for result and its metadata to prevent NPE
+            if (result != null && result.getRecordMetadata() != null) {
+                log.info("Message sent synchronously: topic={}, partition={}, offset={}",
+                        result.getRecordMetadata().topic(),
+                        result.getRecordMetadata().partition(),
+                        result.getRecordMetadata().offset());
+            } else {
+                log.warn("Message sent synchronously but metadata unavailable: topic={}, key={}", topic, key);
+            }
 
             return result;
 
@@ -168,10 +178,16 @@ public class KafkaProducerService {
         future.whenComplete((result, ex) -> {
             if (ex == null) {
                 messagesSentCounter.increment();
-                log.info("Message with headers sent: topic={}, partition={}, offset={}",
-                        result.getRecordMetadata().topic(),
-                        result.getRecordMetadata().partition(),
-                        result.getRecordMetadata().offset());
+                
+                // Added null check for result and its metadata to prevent NPE
+                if (result != null && result.getRecordMetadata() != null) {
+                    log.info("Message with headers sent: topic={}, partition={}, offset={}",
+                            result.getRecordMetadata().topic(),
+                            result.getRecordMetadata().partition(),
+                            result.getRecordMetadata().offset());
+                } else {
+                    log.warn("Message with headers sent but metadata unavailable: topic={}, key={}", topic, key);
+                }
             } else {
                 messagesFailedCounter.increment();
                 log.error("Failed to send message with headers: topic={}, key={}",

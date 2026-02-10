@@ -14,6 +14,11 @@ import java.util.UUID;
 public class EventMapper {
     
     public UserEvent toUserEvent(UserEventRequest request) {
+        // Added null check for request to prevent NPE
+        if (request == null) {
+            throw new IllegalArgumentException("UserEventRequest cannot be null");
+        }
+        
         return UserEvent.builder()
                 .id(UUID.randomUUID().toString())
                 .username(request.getUsername())
@@ -25,6 +30,11 @@ public class EventMapper {
     }
     
     public OrderEvent toOrderEvent(OrderEventRequest request) {
+        // Added null check for request to prevent NPE
+        if (request == null) {
+            throw new IllegalArgumentException("OrderEventRequest cannot be null");
+        }
+        
         return OrderEvent.builder()
                 .id(UUID.randomUUID().toString())
                 .userId(request.getUserId())
@@ -37,10 +47,15 @@ public class EventMapper {
     }
     
     public EventResponse toResponse(String eventId, String correlationId, String eventType) {
+        // Added null checks for parameters to prevent NPE
+        String eventTypeSafe = eventType != null ? eventType : "UNKNOWN";
+        String eventIdSafe = eventId != null ? eventId : "NO_ID";
+        String correlationIdSafe = correlationId != null ? correlationId : "NO_CORRELATION";
+        
         return EventResponse.builder()
-                .eventId(eventId)
-                .correlationId(correlationId)
-                .message(eventType + " event published successfully")
+                .eventId(eventIdSafe)
+                .correlationId(correlationIdSafe)
+                .message(eventTypeSafe + " event published successfully")
                 .timestamp(LocalDateTime.now().toString())
                 .build();
     }

@@ -11,6 +11,12 @@ public class UserEventHandler implements EventHandler<UserEvent, UserEventType> 
 
     @Override
     public void handle(UserEvent event) {
+        // Check if the event is null to prevent NPE
+        if (event == null) {
+            log.error("Received null UserEvent in UserEventHandler");
+            return;
+        }
+        
         log.info("Processing UserEvent: {}", event);
 
         switch (event.getEventType()) {

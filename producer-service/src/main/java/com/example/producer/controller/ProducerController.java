@@ -24,32 +24,36 @@ public class ProducerController {
     @PostMapping("/users")
     public ResponseEntity<EventResponse> publishUserEvent(
             @Valid @RequestBody UserEventRequest request) {
-        
+
         UserEvent event = eventMapper.toUserEvent(request);
         producerService.sendMessage(Topics.USER_EVENTS, event.getId(), event);
-        
+
+        // Added null check for event type to prevent NPE
+        String eventTypeString = request.getEventType() != null ? request.getEventType().toString() : "UNKNOWN";
         EventResponse response = eventMapper.toResponse(
-            event.getId(), 
-            event.getCorrelationId(), 
-            request.getEventType().toString()
+            event.getId(),
+            event.getCorrelationId(),
+            eventTypeString
         );
-        
+
         return ResponseEntity.ok(response);
     }
     
     @PostMapping("/orders")
     public ResponseEntity<EventResponse> publishOrderEvent(
             @Valid @RequestBody OrderEventRequest request) {
-        
+
         OrderEvent event = eventMapper.toOrderEvent(request);
         producerService.sendMessage(Topics.ORDER_EVENTS, event.getId(), event);
-        
+
+        // Added null check for event type to prevent NPE
+        String eventTypeString = request.getEventType() != null ? request.getEventType().toString() : "UNKNOWN";
         EventResponse response = eventMapper.toResponse(
-            event.getId(), 
-            event.getCorrelationId(), 
-            request.getEventType().toString()
+            event.getId(),
+            event.getCorrelationId(),
+            eventTypeString
         );
-        
+
         return ResponseEntity.ok(response);
     }
 
