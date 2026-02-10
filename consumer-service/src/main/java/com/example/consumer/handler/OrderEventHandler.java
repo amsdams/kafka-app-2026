@@ -1,12 +1,13 @@
 package com.example.consumer.handler;
 
 import com.example.common.model.OrderEvent;
+import com.example.common.model.OrderEventType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class OrderEventHandler implements EventHandler<OrderEvent> {
+public class OrderEventHandler implements EventHandler<OrderEvent, OrderEventType> {
 
     @Override
     public void handle(OrderEvent event) {
@@ -28,8 +29,8 @@ public class OrderEventHandler implements EventHandler<OrderEvent> {
     }
 
     @Override
-    public boolean supports(OrderEvent eventType) {
-        return eventType != null && eventType.getEventType().toString().startsWith("ORDER_");
+    public boolean supports(OrderEventType eventType) {
+        return eventType != null && eventType.toString().startsWith("ORDER_");
     }
 
     private void handleOrderCreated(OrderEvent event) {

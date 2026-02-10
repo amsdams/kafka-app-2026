@@ -1,12 +1,13 @@
 package com.example.consumer.handler;
 
 import com.example.common.model.UserEvent;
+import com.example.common.model.UserEventType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class UserEventHandler implements EventHandler<UserEvent> {
+public class UserEventHandler implements EventHandler<UserEvent, UserEventType> {
 
     @Override
     public void handle(UserEvent event) {
@@ -29,8 +30,8 @@ public class UserEventHandler implements EventHandler<UserEvent> {
 
 
     @Override
-    public boolean supports(UserEvent eventType) {
-        return eventType != null && eventType.getEventType().toString().startsWith("USER_");
+    public boolean supports(UserEventType eventType) {
+        return eventType != null && eventType.toString().startsWith("USER_");
     }
 
     private void handleUserCreated(UserEvent event) {

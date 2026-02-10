@@ -2,7 +2,9 @@ package com.example.consumer.service;
 
 import com.example.common.constants.Topics;
 import com.example.common.model.OrderEvent;
+import com.example.common.model.OrderEventType;
 import com.example.common.model.UserEvent;
+import com.example.common.model.UserEventType;
 import com.example.consumer.handler.EventHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +22,8 @@ import java.util.List;
 @Slf4j
 public class KafkaConsumerService {
 
-    private final List<EventHandler<UserEvent>> userEventHandlers;
-    private final List<EventHandler<OrderEvent>> orderEventHandlers;
+    private final List<EventHandler<UserEvent, UserEventType>> userEventHandlers;
+    private final List<EventHandler<OrderEvent, OrderEventType>> orderEventHandlers;
 
     @KafkaListener(
         topics = Topics.USER_EVENTS,
@@ -40,7 +42,7 @@ public class KafkaConsumerService {
             
             // Find appropriate handler
             userEventHandlers.stream()
-                .filter(handler -> handler.supports(event))
+                .filter(handler -> handler.supports(event.getEventType()))
                 .findFirst()
                 .ifPresentOrElse(
                     handler -> handler.handle(event),
@@ -74,7 +76,7 @@ public class KafkaConsumerService {
             
             // Find appropriate handler
             orderEventHandlers.stream()
-                .filter(handler -> handler.supports(event))
+                .filter(handler -> handler.supports(event.getEventType()))
                 .findFirst()
                 .ifPresentOrElse(
                     handler -> handler.handle(event),
