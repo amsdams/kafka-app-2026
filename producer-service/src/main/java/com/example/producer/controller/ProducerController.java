@@ -10,7 +10,6 @@ import com.example.producer.mapper.EventMapper;
 import com.example.producer.service.KafkaProducerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.NonNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,36 +22,32 @@ public class ProducerController {
     private final EventMapper eventMapper;
 
     @PostMapping("/users")
-    public ResponseEntity<@NonNull EventResponse> publishUserEvent(
-            @Valid @NonNull @RequestBody UserEventRequest request) {
+    public ResponseEntity<EventResponse> publishUserEvent(
+            @Valid @RequestBody UserEventRequest request) {
 
         UserEvent event = eventMapper.toUserEvent(request);
         producerService.sendMessage(Topics.USER_EVENTS, event.getId(), event);
 
-        // Added null check for event type to prevent NPE
-        String eventTypeString = request.getEventType() != null ? request.getEventType().toString() : "UNKNOWN";
         EventResponse response = eventMapper.toResponse(
             event.getId(),
             event.getCorrelationId(),
-            eventTypeString
+            request.getEventType().toString()
         );
 
         return ResponseEntity.ok(response);
     }
-    
+
     @PostMapping("/orders")
-    public ResponseEntity<@NonNull EventResponse> publishOrderEvent(
-            @Valid @NonNull @RequestBody OrderEventRequest request) {
+    public ResponseEntity<EventResponse> publishOrderEvent(
+            @Valid @RequestBody OrderEventRequest request) {
 
         OrderEvent event = eventMapper.toOrderEvent(request);
         producerService.sendMessage(Topics.ORDER_EVENTS, event.getId(), event);
 
-        // Added null check for event type to prevent NPE
-        String eventTypeString = request.getEventType() != null ? request.getEventType().toString() : "UNKNOWN";
         EventResponse response = eventMapper.toResponse(
             event.getId(),
             event.getCorrelationId(),
-            eventTypeString
+            request.getEventType().toString()
         );
 
         return ResponseEntity.ok(response);

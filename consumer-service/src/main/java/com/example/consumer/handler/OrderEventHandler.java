@@ -3,7 +3,6 @@ package com.example.consumer.handler;
 import com.example.common.model.OrderEvent;
 import com.example.common.model.OrderEventType;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -11,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class OrderEventHandler implements EventHandler<OrderEvent, OrderEventType> {
 
     @Override
-    public void handle(@NonNull OrderEvent event) {
+    public void handle(OrderEvent event) {
         log.info("Processing OrderEvent: {}", event);
 
         switch (event.getEventType()) {

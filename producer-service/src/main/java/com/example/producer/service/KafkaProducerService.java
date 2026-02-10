@@ -4,7 +4,6 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.NonNull;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
@@ -32,8 +31,8 @@ public class KafkaProducerService {
     private final Timer sendTimer;
 
     public KafkaProducerService(
-            @NonNull KafkaTemplate<String, Object> kafkaTemplate,
-            @NonNull MeterRegistry meterRegistry) {
+            KafkaTemplate<String, Object> kafkaTemplate,
+            MeterRegistry meterRegistry) {
         this.kafkaTemplate = kafkaTemplate;
 
         // BEST PRACTICE: Initialize metrics for monitoring
@@ -57,7 +56,7 @@ public class KafkaProducerService {
      * Convenience method - delegates to sendMessageAsync
      * Use this for simpler code when you don't need the Future
      */
-    public <T> void sendMessage(@NonNull String topic, @NonNull String key, @NonNull T event) {
+    public <T> void sendMessage(String topic, String key, T event) {
         sendMessageAsync(topic, key, event);
     }
 
@@ -66,7 +65,7 @@ public class KafkaProducerService {
      * Returns CompletableFuture for non-blocking operations
      */
     public <T> CompletableFuture<SendResult<String, Object>> sendMessageAsync(
-            @NonNull String topic, @NonNull String key, @NonNull T event) {
+            String topic, String key, T event) {
 
         long startTime = System.nanoTime();
 
@@ -85,17 +84,12 @@ public class KafkaProducerService {
                 messagesSentCounter.increment();
 
                 // BEST PRACTICE: Structured logging with all context
-                // Added null check for result and its metadata to prevent NPE
-                if (result != null && result.getRecordMetadata() != null) {
-                    log.info("Message sent successfully: topic={}, partition={}, offset={}, key={}, timestamp={}",
-                            result.getRecordMetadata().topic(),
-                            result.getRecordMetadata().partition(),
-                            result.getRecordMetadata().offset(),
-                            key,
-                            result.getRecordMetadata().timestamp());
-                } else {
-                    log.warn("Message sent but metadata unavailable: topic={}, key={}", topic, key);
-                }
+                log.info("Message sent successfully: topic={}, partition={}, offset={}, key={}, timestamp={}",
+                        result.getRecordMetadata().topic(),
+                        result.getRecordMetadata().partition(),
+                        result.getRecordMetadata().offset(),
+                        key,
+                        result.getRecordMetadata().timestamp());
             } else {
                 // Failure
                 messagesFailedCounter.increment();
@@ -118,7 +112,7 @@ public class KafkaProducerService {
      * Use sparingly - async is preferred for performance
      */
     public <T> SendResult<String, Object> sendMessageSync(
-            @NonNull String topic, @NonNull String key, @NonNull T event) throws Exception {
+            String topic, String key, T event) throws Exception {
 
         long startTime = System.nanoTime();
 
@@ -136,15 +130,10 @@ public class KafkaProducerService {
             sendTimer.record(duration, TimeUnit.NANOSECONDS);
             messagesSentCounter.increment();
 
-            // Added null check for result and its metadata to prevent NPE
-            if (result != null && result.getRecordMetadata() != null) {
-                log.info("Message sent synchronously: topic={}, partition={}, offset={}",
-                        result.getRecordMetadata().topic(),
-                        result.getRecordMetadata().partition(),
-                        result.getRecordMetadata().offset());
-            } else {
-                log.warn("Message sent synchronously but metadata unavailable: topic={}, key={}", topic, key);
-            }
+            log.info("Message sent synchronously: topic={}, partition={}, offset={}",
+                    result.getRecordMetadata().topic(),
+                    result.getRecordMetadata().partition(),
+                    result.getRecordMetadata().offset());
 
             return result;
 
@@ -159,7 +148,7 @@ public class KafkaProducerService {
      * BEST PRACTICE: Send with custom headers for metadata
      */
     public <T> CompletableFuture<SendResult<String, Object>> sendMessageWithHeaders(
-            @NonNull String topic, @NonNull String key, @NonNull T event, java.util.Map<String, String> headers) {
+            String topic, String key, T event, java.util.Map<String, String> headers) {
 
         log.debug("Sending message with headers: topic={}, key={}, headers={}",
                 topic, key, headers);
@@ -179,16 +168,10 @@ public class KafkaProducerService {
         future.whenComplete((result, ex) -> {
             if (ex == null) {
                 messagesSentCounter.increment();
-                
-                // Added null check for result and its metadata to prevent NPE
-                if (result != null && result.getRecordMetadata() != null) {
-                    log.info("Message with headers sent: topic={}, partition={}, offset={}",
-                            result.getRecordMetadata().topic(),
-                            result.getRecordMetadata().partition(),
-                            result.getRecordMetadata().offset());
-                } else {
-                    log.warn("Message with headers sent but metadata unavailable: topic={}, key={}", topic, key);
-                }
+                log.info("Message with headers sent: topic={}, partition={}, offset={}",
+                        result.getRecordMetadata().topic(),
+                        result.getRecordMetadata().partition(),
+                        result.getRecordMetadata().offset());
             } else {
                 messagesFailedCounter.increment();
                 log.error("Failed to send message with headers: topic={}, key={}",

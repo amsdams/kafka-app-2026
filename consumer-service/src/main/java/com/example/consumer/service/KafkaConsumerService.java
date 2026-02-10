@@ -8,7 +8,6 @@ import com.example.common.model.UserEventType;
 import com.example.consumer.handler.EventHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.NonNull;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -23,8 +22,8 @@ import java.util.List;
 @Slf4j
 public class KafkaConsumerService {
 
-    private final List<@NonNull EventHandler<UserEvent, UserEventType>> userEventHandlers;
-    private final List<@NonNull EventHandler<OrderEvent, OrderEventType>> orderEventHandlers;
+    private final List<EventHandler<UserEvent, UserEventType>> userEventHandlers;
+    private final List<EventHandler<OrderEvent, OrderEventType>> orderEventHandlers;
 
     @KafkaListener(
         topics = Topics.USER_EVENTS,
@@ -35,17 +34,9 @@ public class KafkaConsumerService {
             @Payload UserEvent event,
             @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
             @Header(KafkaHeaders.OFFSET) long offset,
-            @NonNull Acknowledgment acknowledgment
+            Acknowledgment acknowledgment
     ) {
         try {
-            // IMPORTANT: Keep this null check as the event comes from external source (Kafka)
-            // and is not guaranteed by method signature annotations
-            if (event == null) {
-                log.error("Received null UserEvent from partition: {}, offset: {}", partition, offset);
-                acknowledgment.acknowledge();
-                return;
-            }
-            
             log.info("Received UserEvent from partition: {}, offset: {}", partition, offset);
             log.info("UserEvent details: {}", event);
 
@@ -77,17 +68,9 @@ public class KafkaConsumerService {
             @Payload OrderEvent event,
             @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
             @Header(KafkaHeaders.OFFSET) long offset,
-            @NonNull Acknowledgment acknowledgment
+            Acknowledgment acknowledgment
     ) {
         try {
-            // IMPORTANT: Keep this null check as the event comes from external source (Kafka)
-            // and is not guaranteed by method signature annotations
-            if (event == null) {
-                log.error("Received null OrderEvent from partition: {}, offset: {}", partition, offset);
-                acknowledgment.acknowledge();
-                return;
-            }
-            
             log.info("Received OrderEvent from partition: {}, offset: {}", partition, offset);
             log.info("OrderEvent details: {}", event);
 
