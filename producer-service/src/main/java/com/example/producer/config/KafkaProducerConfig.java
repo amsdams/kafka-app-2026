@@ -7,6 +7,14 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 
+/**
+ * Kafka Producer Configuration
+ * <p>
+ * Best Practices:
+ * - Uses KafkaProperties from application.yml
+ * - Generic Object value type for flexibility
+ * - Configured with idempotence, compression, batching
+ */
 @Configuration
 public class KafkaProducerConfig {
 
