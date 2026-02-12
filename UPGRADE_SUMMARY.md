@@ -278,7 +278,7 @@ curl http://localhost:8081/actuator/health
 curl http://localhost:8082/actuator/health
 
 # Send test message
-curl -X POST http://localhost:8081/api/events/publish \
+curl -X POST http://localhost:8081/api/producer/publish \
   -H "Content-Type: application/json" \
   -d '{"username":"test","email":"test@example.com","eventType":"TEST"}'
 ```

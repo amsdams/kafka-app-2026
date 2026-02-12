@@ -122,7 +122,7 @@ make up
 ### End-to-End Test
 ```bash
 # Send test message
-curl -X POST http://localhost:8081/api/events/users \
+curl -X POST http://localhost:8081/api/producer/users \
   -H "Content-Type: application/json" \
   -d '{"username":"test","email":"test@example.com","eventType":"USER_CREATED"}'
 

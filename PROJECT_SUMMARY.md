@@ -77,7 +77,7 @@ docker-compose up --build -d
 ### Test It
 ```bash
 # Send a message
-curl -X POST http://localhost:8081/api/events/publish \
+curl -X POST http://localhost:8081/api/producer/publish \
   -H "Content-Type: application/json" \
   -d '{"username":"test","email":"test@example.com","eventType":"USER_CREATED"}'
 

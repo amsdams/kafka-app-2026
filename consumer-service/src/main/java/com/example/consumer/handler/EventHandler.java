@@ -1,6 +1,6 @@
 package com.example.consumer.handler;
 
-public interface EventHandler<T> {
+public interface EventHandler<T, E extends Enum<E>>  {
     void handle(T event);
-    boolean supports(String eventType);
+    boolean supports(E eventType);
 }

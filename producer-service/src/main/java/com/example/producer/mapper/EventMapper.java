@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Component
 public class EventMapper {
-    
+
     public UserEvent toUserEvent(UserEventRequest request) {
         return UserEvent.builder()
                 .id(UUID.randomUUID().toString())
@@ -23,7 +23,7 @@ public class EventMapper {
                 .correlationId(UUID.randomUUID().toString())
                 .build();
     }
-    
+
     public OrderEvent toOrderEvent(OrderEventRequest request) {
         return OrderEvent.builder()
                 .id(UUID.randomUUID().toString())
@@ -35,7 +35,7 @@ public class EventMapper {
                 .correlationId(UUID.randomUUID().toString())
                 .build();
     }
-    
+
     public EventResponse toResponse(String eventId, String correlationId, String eventType) {
         return EventResponse.builder()
                 .eventId(eventId)

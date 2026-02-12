@@ -34,7 +34,7 @@ sleep 15
 echo ""
 echo "🏥 Checking service health..."
 
-PRODUCER_HEALTH=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8081/api/events/health)
+PRODUCER_HEALTH=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8081/api/producer/health)
 CONSUMER_HEALTH=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8082/api/consumer/health)
 
 if [ "$PRODUCER_HEALTH" == "200" ]; then
@@ -51,11 +51,11 @@ fi
 
 echo ""
 echo "📊 Service URLs:"
-echo "   Producer: http://localhost:8081/api/events/health"
+echo "   Producer: http://localhost:8081/api/producer/health"
 echo "   Consumer: http://localhost:8082/api/consumer/health"
 echo ""
 echo "📝 Test the services with:"
-echo '   curl -X POST http://localhost:8081/api/events/publish \'
+echo '   curl -X POST http://localhost:8081/api/producer/publish \'
 echo '     -H "Content-Type: application/json" \'
 echo '     -d '"'"'{"username":"test_user","email":"test@example.com","eventType":"USER_CREATED"}'"'"
 echo ""

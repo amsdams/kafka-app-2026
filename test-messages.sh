@@ -15,7 +15,7 @@ for i in {1..10}; do
     
     echo "[$i/10] Sending event: $event for user: $user"
     
-    response=$(curl -s -X POST http://localhost:8081/api/events/publish \
+    response=$(curl -s -X POST http://localhost:8081/api/producer/publish \
       -H "Content-Type: application/json" \
       -d "{
         \"username\": \"$user\",

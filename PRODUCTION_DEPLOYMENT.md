@@ -310,7 +310,7 @@ curl https://consumer.example.com/actuator/health
 ### 2. Test Message Flow
 ```bash
 # Send test message
-curl -X POST https://producer.example.com/api/events/users \
+curl -X POST https://producer.example.com/api/producer/users \
   -H "Content-Type: application/json" \
   -d '{
     "username": "test-user",

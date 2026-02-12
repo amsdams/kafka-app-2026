@@ -1,5 +1,6 @@
 package com.example.producer.dto;
 
+import com.example.common.model.OrderEventType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -23,6 +24,6 @@ public class OrderEventRequest {
     @Positive(message = "Amount must be positive")
     private BigDecimal amount;
     
-    @NotBlank(message = "Event type is required")
-    private String eventType;
+    @NotNull(message = "Event type is required")
+    private OrderEventType eventType;
 }

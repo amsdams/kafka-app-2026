@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/events")
+@RequestMapping("/api/producer")
 @RequiredArgsConstructor
 public class ProducerController {
 
@@ -24,32 +24,32 @@ public class ProducerController {
     @PostMapping("/users")
     public ResponseEntity<EventResponse> publishUserEvent(
             @Valid @RequestBody UserEventRequest request) {
-        
+
         UserEvent event = eventMapper.toUserEvent(request);
         producerService.sendMessage(Topics.USER_EVENTS, event.getId(), event);
-        
+
         EventResponse response = eventMapper.toResponse(
-            event.getId(), 
-            event.getCorrelationId(), 
-            request.getEventType()
+            event.getId(),
+            event.getCorrelationId(),
+            request.getEventType().toString()
         );
-        
+
         return ResponseEntity.ok(response);
     }
-    
+
     @PostMapping("/orders")
     public ResponseEntity<EventResponse> publishOrderEvent(
             @Valid @RequestBody OrderEventRequest request) {
-        
+
         OrderEvent event = eventMapper.toOrderEvent(request);
         producerService.sendMessage(Topics.ORDER_EVENTS, event.getId(), event);
-        
+
         EventResponse response = eventMapper.toResponse(
-            event.getId(), 
-            event.getCorrelationId(), 
-            request.getEventType()
+            event.getId(),
+            event.getCorrelationId(),
+            request.getEventType().toString()
         );
-        
+
         return ResponseEntity.ok(response);
     }
 

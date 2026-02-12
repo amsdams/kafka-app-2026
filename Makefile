@@ -49,13 +49,13 @@ clean:
 # Send test messages
 test:
 	@echo "Sending test user event..."
-	@curl -X POST http://localhost:8081/api/events/users \
+	@curl -X POST http://localhost:8081/api/producer/users \
 		-H "Content-Type: application/json" \
 		-d '{"username":"test-user","email":"test@example.com","eventType":"USER_CREATED"}' \
 		| jq .
 	@echo ""
 	@echo "Sending test order event..."
-	@curl -X POST http://localhost:8081/api/events/orders \
+	@curl -X POST http://localhost:8081/api/producer/orders \
 		-H "Content-Type: application/json" \
 		-d '{"userId":"user-123","productName":"Test Product","amount":99.99,"eventType":"ORDER_CREATED"}' \
 		| jq .

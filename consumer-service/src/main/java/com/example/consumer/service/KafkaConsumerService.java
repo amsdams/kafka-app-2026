@@ -2,7 +2,9 @@ package com.example.consumer.service;
 
 import com.example.common.constants.Topics;
 import com.example.common.model.OrderEvent;
+import com.example.common.model.OrderEventType;
 import com.example.common.model.UserEvent;
+import com.example.common.model.UserEventType;
 import com.example.consumer.handler.EventHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +22,8 @@ import java.util.List;
 @Slf4j
 public class KafkaConsumerService {
 
-    private final List<EventHandler<UserEvent>> userEventHandlers;
-    private final List<EventHandler<OrderEvent>> orderEventHandlers;
+    private final List<EventHandler<UserEvent, UserEventType>> userEventHandlers;
+    private final List<EventHandler<OrderEvent, OrderEventType>> orderEventHandlers;
 
     @KafkaListener(
         topics = Topics.USER_EVENTS,
@@ -37,7 +39,7 @@ public class KafkaConsumerService {
         try {
             log.info("Received UserEvent from partition: {}, offset: {}", partition, offset);
             log.info("UserEvent details: {}", event);
-            
+
             // Find appropriate handler
             userEventHandlers.stream()
                 .filter(handler -> handler.supports(event.getEventType()))
@@ -46,10 +48,10 @@ public class KafkaConsumerService {
                     handler -> handler.handle(event),
                     () -> log.warn("No handler found for event type: {}", event.getEventType())
                 );
-            
+
             acknowledgment.acknowledge();
             log.info("UserEvent acknowledged successfully");
-            
+
         } catch (Exception e) {
             log.error("Error processing UserEvent: {}", event, e);
             // TODO: Send to DLQ or implement retry logic
@@ -71,7 +73,7 @@ public class KafkaConsumerService {
         try {
             log.info("Received OrderEvent from partition: {}, offset: {}", partition, offset);
             log.info("OrderEvent details: {}", event);
-            
+
             // Find appropriate handler
             orderEventHandlers.stream()
                 .filter(handler -> handler.supports(event.getEventType()))
@@ -80,10 +82,10 @@ public class KafkaConsumerService {
                     handler -> handler.handle(event),
                     () -> log.warn("No handler found for event type: {}", event.getEventType())
                 );
-            
+
             acknowledgment.acknowledge();
             log.info("OrderEvent acknowledged successfully");
-            
+
         } catch (Exception e) {
             log.error("Error processing OrderEvent: {}", event, e);
             // TODO: Send to DLQ or implement retry logic
