@@ -36,7 +36,7 @@
         <!-- Dependency Versions -->
         <spring-kafka.version>3.3.1</spring-kafka.version>
         <lombok.version>1.18.36</lombok.version>
-        <micrometer.version>1.14.2</micrometer.version>
+        <micrometer.version>1.16.3</micrometer.version>
         <springdoc.version>2.7.0</springdoc.version>
         
         <!-- Plugin Versions -->
