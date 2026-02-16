@@ -34,7 +34,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         
         <!-- Dependency Versions -->
-        <spring-kafka.version>3.3.1</spring-kafka.version>
+        <spring-kafka.version>4.0.2</spring-kafka.version>
         <lombok.version>1.18.36</lombok.version>
         <micrometer.version>1.14.2</micrometer.version>
         <springdoc.version>2.7.0</springdoc.version>
